@@ -32,11 +32,11 @@ const Booking = () => {
     const [checkOutDate, setCheckOutDate] = useState('');
     const [roomType, setRoomType] = useState('single');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [confirmationMessage, setConfirmationMessage] = useState('');
     const [totalPrice, setTotalPrice] = useState(0);
 
     useEffect(() => {
-        // Calculate total price whenever checkInDate, checkOutDate, or roomType changes
         const checkIn = new Date(checkInDate);
         const checkOut = new Date(checkOutDate);
         const timeDiff = checkOut.getTime() - checkIn.getTime();
@@ -51,21 +51,56 @@ const Booking = () => {
         }
     }, [checkInDate, checkOutDate, roomType]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Ensure check-out date is valid
         if (totalPrice <= 0) {
             alert('Please ensure your check-out date is after your check-in date.');
             return;
         }
 
-        setConfirmationMessage(`Booking confirmed for a ${roomType} from ${checkInDate} to ${checkOutDate}. Total price: $${totalPrice}. Thank you for your booking!`);
-        setIsModalOpen(true);
-        setName('');
-        setEmail('');
-        setCheckInDate('');
-        setCheckOutDate('');
-        setRoomType('single');
+        setIsLoading(true);
+
+        const bookingData = {
+            name,
+            email,
+            checkInDate,
+            checkOutDate,
+            roomType,
+            totalPrice,
+        };
+
+        try {
+            await new Promise(resolve => setTimeout(resolve, 5000)); // Delay 5 detik
+
+            const response = await fetch('http://localhost:3001/api/book', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(bookingData),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to book the room.');
+            }
+
+            const data = await response.json();
+            setConfirmationMessage(data.message || 'Booking Successful!');
+            setIsModalOpen(true);
+        } catch (error) {
+            if (error instanceof Error) {
+                alert('Error: ' + error.message);
+            } else {
+                alert('An unknown error occurred.');
+            }
+        } finally {
+            setIsLoading(false);
+            setName('');
+            setEmail('');
+            setCheckInDate('');
+            setCheckOutDate('');
+            setRoomType('single');
+        }
     };
 
     const closeModal = () => {
@@ -93,7 +128,7 @@ const Booking = () => {
                             <p className="text-gray-600">{room.description}</p>
                             <p className="text-gray-800 font-semibold">${room.price} per night</p>
                             <button
-                                className={`mt-2 px-4 py-2 rounded ${roomType === room.id ? 'bg-krem text-white' : 'bg-krem  text-white' }`}
+                                className={`mt-2 px-4 py-2 rounded ${roomType === room.id ? 'bg-birumuda text-white' : 'bg-birumuda text-white'}`}
                                 onClick={() => setRoomType(room.id)}
                             >
                                 Select
@@ -102,82 +137,104 @@ const Booking = () => {
                     ))}
                 </div>
 
-                <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md mt-auto">
+                {/* Tambahan H2 untuk Booking Form */}
+                <h2 className="text-3xl font-bold text-center text-gray-800 mb-12 mt-16">
+                    Booking Form
+                </h2>
+
+                <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
                     <div className="mb-4">
-                        <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name</label>
+                        <label className="block text-gray-700">Name</label>
                         <input
                             type="text"
-                            id="name"
+                            className="w-full border rounded-lg p-2"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                        <label className="block text-gray-700">Email</label>
                         <input
                             type="email"
-                            id="email"
+                            className="w-full border rounded-lg p-2"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="checkInDate" className="block text-gray-700 text-sm font-bold mb-2">Check-In Date</label>
+                        <label className="block text-gray-700">Check-In Date</label>
                         <input
                             type="date"
-                            id="checkInDate"
+                            className="w-full border rounded-lg p-2"
                             value={checkInDate}
                             onChange={(e) => setCheckInDate(e.target.value)}
                             required
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="checkOutDate" className="block text-gray-700 text-sm font-bold mb-2">Check-Out Date</label>
+                        <label className="block text-gray-700">Check-Out Date</label>
                         <input
                             type="date"
-                            id="checkOutDate"
+                            className="w-full border rounded-lg p-2"
                             value={checkOutDate}
                             onChange={(e) => setCheckOutDate(e.target.value)}
                             required
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="totalPrice" className="block text-gray-700 text-sm font-bold mb-2">Total Price</label>
-                        <input
-                            type="text"
-                            id="totalPrice"
-                            value={`$${totalPrice}`}
-                            readOnly
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
+                        <label className="block text-gray-700">Total Price: ${totalPrice}</label>
                     </div>
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
+                        className={`w-full bg-blue-500 text-white font-bold py-2 rounded hover:bg-blue-700 transition duration-300 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        disabled={isLoading}
                     >
-                        Book Now
+                        {isLoading ? (
+                            <div className="flex items-center justify-center space-x-2">
+                                <div className="w-5 h-5 border-t-2 border-r-2 border-white rounded-full animate-spin"></div>
+                                <span>Booking...</span>
+                            </div>
+                        ) : (
+                            'Book Now'
+                        )}
                     </button>
                 </form>
 
                 {isModalOpen && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-                            <h3 className="text-lg font-bold mb-4">Booking Confirmation</h3>
-                            <p>{confirmationMessage}</p>
-                            <div className="mt-4">
-                                <button
-                                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none"
-                                    onClick={closeModal}
-                                >
-                                    Close
-                                </button>
+                    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                        <div className="bg-white rounded-lg shadow-lg p-8 max-w-sm w-full mx-4 transform transition-all duration-300">
+                            <div className="flex items-center justify-center mb-4">
+                                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                                    <svg
+                                        className="w-6 h-6 text-white"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M5 13l4 4L19 7"
+                                        ></path>
+                                    </svg>
+                                </div>
                             </div>
+                            <h2 className="text-xl font-bold text-center text-gray-900 mb-2">
+                                {confirmationMessage}
+                            </h2>
+                            <p className="text-gray-600 text-center">
+                                Thank you, {name}! Your booking is confirmed.
+                            </p>
+                            <button
+                                onClick={closeModal}
+                                className="mt-6 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-700 transition duration-300"
+                            >
+                                Close
+                            </button>
                         </div>
                     </div>
                 )}

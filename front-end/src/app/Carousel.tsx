@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 const images = [
-    '/images/fasilitas1.jpg',
-    '/images/fasilitas2.jpg',
-    '/images/fasilitas3.jpg',
-    '/images/fasilitas1.jpg',
-    '/images/fasilitas2.jpg',
+    '/images/bar1.jpg',
+    '/images/dining.jpg',
+    '/images/ruangtamu.jpg',
+    '/images/sauna.jpg',
+    '/images/bar2.jpg',
 ];
 
 const Carousel = () => {
@@ -39,7 +40,13 @@ const Carousel = () => {
                         key={index}
                         className={`absolute inset-0 transition-opacity duration-700 ${index === currentIndex ? 'opacity-100' : 'opacity-0'}`}
                     >
-                        <img src={image} alt={`Slide ${index + 1}`} className="block w-full h-full object-cover" />
+                        <Image
+                            src={image}
+                            alt={`Slide ${index + 1}`}
+                            layout="fill"
+                            objectFit="cover"
+                            className="rounded-lg"
+                        />
                     </div>
                 ))}
             </div>

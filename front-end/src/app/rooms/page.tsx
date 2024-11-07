@@ -12,7 +12,7 @@ type Room = {
 
 function Rooms() {
     const [rooms, setRooms] = useState<Room[]>([]);
-    const [selectedRoom, setSelectedRoom] = useState<Room | null>(null); // State untuk room yang dipilih
+    const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
     useEffect(() => {
         const fetchRooms = async () => {
@@ -26,6 +26,70 @@ function Rooms() {
         };
         fetchRooms();
     }, []);
+
+    const renderRoomDetails = (roomName: string) => {
+        if (roomName === "Single Room") {
+            return (
+                <div className="text-gray-700 mt-4">
+                    <p>Contains:</p>
+                    <ul className="list-disc pl-5">
+                        <li>One bed</li>
+                        <li>A sofa</li>
+                        <li>A bathroom</li>
+                        <li>AC (Air conditioner)</li>
+                        <li>Television</li>
+                        <li>Table</li>
+                    </ul>
+                </div>
+            );
+        } else if (roomName === "Double Room") {
+            return (
+                <div className="text-gray-700 mt-4">
+                    <p>Contains:</p>
+                    <ul className="list-disc pl-5">
+                        <li>Table (oh no the table is broken)</li>
+                        <li>TV / Television</li>
+                        <li>Sofa</li>
+                        <li>Bathroom</li>
+                        <li>Queen double bed</li>
+                        <li>Air conditioner</li>
+                    </ul>
+                    <div className="mt-4">
+                        <p>Benefits :</p>
+                        <ul className="list-disc pl-5 mt-2">
+                            <li>More space</li>
+                            <li>Suitable for couples or solo travelers</li>
+                            <li>Flexible for friends, couples, or coworkers</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        } else if (roomName === "Suite Room") {
+            return (
+                <div className="text-gray-700 mt-2">
+                    <p>Contains:</p>
+                    <ul className="list-disc pl-5">
+                        <li>Large bed</li>
+                        <li>Mini pantry</li>
+                        <li>Bathroom</li>
+                        <li>Television</li>
+                        <li>Sofa</li>
+                        <li>Air conditioner</li>
+                    </ul>
+                    <div className="mt-4">
+                        <p>Benefits :</p>
+                        <ul className="list-disc pl-5 mt-2">
+                            <li>Larger space</li>
+                            <li>Larger bed</li>
+                            <li>Has a mini pantry</li>
+                            <li>Larger bathroom</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+        return null;
+    };
 
     return (
         <section className="bg-gray-50 py-20">
@@ -75,6 +139,7 @@ function Rooms() {
                                 className="w-full h-60 object-cover rounded-lg mb-4"
                             />
                             <p className="text-gray-700">{selectedRoom.description}</p>
+                            {renderRoomDetails(selectedRoom.name)}
                             <button
                                 className="mt-6 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-all"
                                 onClick={() => setSelectedRoom(null)}

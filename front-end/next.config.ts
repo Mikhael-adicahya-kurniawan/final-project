@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
       'asset.olympicfurniture.co.id',
       'victoriahotel.co.uk',
       'www.pearlhotelnyc.com',
+      'www.momondo.com',
+      's2.bukalapak.com',
+      'unsplash.com',
+      'media.istockphoto.com',
+      'news.azanahotel.com',
     ], // Add the domains where you're fetching images from
   },
 };

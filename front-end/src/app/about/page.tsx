@@ -11,7 +11,7 @@ const AboutUs = () => {
                     <div className="md:w-2/3 mb-8 md:mb-0">
                         <h3 className="text-2xl font-semibold mb-4 mt-12 text-white">Welcome to SIGMA Hotel</h3>
                         <p className="text-white mb-4">
-                            SC Hotel is a luxurious haven where comfort meets elegance. Our dedicated staff is here to ensure your stay is
+                            SIGMA Hotel is a luxurious haven where comfort meets elegance. Our dedicated staff is here to ensure your stay is
                             nothing short of extraordinary. Enjoy a range of world-class amenities and services designed to provide
                             an unforgettable experience.
                         </p>
@@ -85,7 +85,7 @@ const AboutUs = () => {
                         {/* Anggota Tim 3 */}
                         <div className="bg-white rounded-lg shadow p-4 w-64 flex-shrink-0">
                             <Image
-                                src="/images/foto1.jpg" // Ganti dengan gambar anggota tim Anda
+                                src="/images/foto21.png" // Ganti dengan gambar anggota tim Anda
                                 alt="Team Member 3"
                                 width={200}
                                 height={200}
